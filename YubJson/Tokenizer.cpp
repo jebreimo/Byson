@@ -30,7 +30,7 @@ namespace YubJson
         return true;
     }
 
-    TokenType Tokenizer::getTokenType() const
+    TokenType Tokenizer::tokenType() const
     {
         return m_TokenType;
     }
@@ -42,7 +42,7 @@ namespace YubJson
         return std::make_pair(true, s_TokenTypeTable[*m_Pos]);
     }
 
-    const void* Tokenizer::getPosition() const
+    const void* Tokenizer::position() const
     {
         return m_Pos;
     }

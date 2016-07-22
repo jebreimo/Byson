@@ -125,9 +125,13 @@ namespace YubJson
 
         void writeCount(size_t count);
 
-        #pragma warning(push)
-        #pragma warning(disable: 4251)
+        #ifdef _MSC_VER
+            #pragma warning(push)
+            #pragma warning(disable: 4251)
+        #endif
         std::vector<uint8_t> m_Buffer;
-        #pragma warning(pop)
+        #ifdef _MSC_VER
+            #pragma warning(pop)
+        #endif
     };
 }

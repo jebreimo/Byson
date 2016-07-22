@@ -14,7 +14,7 @@ namespace YubJson
     {
     public:
         TokenizerPositionRestorer(Tokenizer& tokenizer) : m_Tokenizer(
-                tokenizer), m_Position(tokenizer.getPosition())
+                tokenizer), m_Position(tokenizer.position())
         {
         }
 
@@ -25,7 +25,7 @@ namespace YubJson
 
         void update()
         {
-            m_Position = m_Tokenizer.getPosition();
+            m_Position = m_Tokenizer.position();
         }
 
         void clear()

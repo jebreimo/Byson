@@ -21,11 +21,11 @@ namespace YubJson
 
         bool nextToken();
 
-        TokenType getTokenType() const;
+        TokenType tokenType() const;
 
         std::pair<bool, TokenType> peekToken() const;
 
-        const void* getPosition() const;
+        const void* position() const;
 
         void setPosition(const void* pos);
 

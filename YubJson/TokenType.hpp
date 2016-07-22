@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <ostream>
 
 namespace YubJson
 {
@@ -32,4 +33,9 @@ namespace YubJson
         Count = '#',
         ValueType = '$'
     };
+
+    inline std::ostream& operator<<(std::ostream& os, TokenType tokenType)
+    {
+        return os << static_cast<char>(tokenType);
+    }
 }

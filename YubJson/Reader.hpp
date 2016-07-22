@@ -26,7 +26,7 @@ namespace YubJson
 
         ~Reader();
 
-        size_t getPosition() const;
+        size_t position() const;
 
         void setPosition(size_t pos);
 
@@ -83,7 +83,8 @@ namespace YubJson
             TokenizerPositionRestorer tokRestorer(m_Tokenizer);
             if (!m_Tokenizer.nextToken())
                 return false;
-            if (!readCompatibleRawValue(value, ValueType( m_Tokenizer.getTokenType())))
+            if (!readCompatibleRawValue(value, ValueType(
+                    m_Tokenizer.tokenType())))
                 return false;
             tokRestorer.clear();
             return true;

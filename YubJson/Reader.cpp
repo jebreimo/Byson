@@ -18,9 +18,9 @@ namespace YubJson
     Reader::~Reader()
     {}
 
-    size_t Reader::getPosition() const
+    size_t Reader::position() const
     {
-        auto diff = (const char*)m_Tokenizer.getPosition()
+        auto diff = (const char*)m_Tokenizer.position()
                     - (const char*)m_Buffer;
         return (size_t)diff;
     }
@@ -114,9 +114,9 @@ namespace YubJson
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!m_Tokenizer.nextToken())
             return false;
-        if (m_Tokenizer.getTokenType() == TokenType::TrueValue)
+        if (m_Tokenizer.tokenType() == TokenType::TrueValue)
             value = true;
-        else if (m_Tokenizer.getTokenType() == TokenType::FalseValue)
+        else if (m_Tokenizer.tokenType() == TokenType::FalseValue)
             value = false;
         else
             return false;
@@ -187,7 +187,7 @@ namespace YubJson
         int64_t size;
         if (!readCompatibleValue(size))
             return false;
-        stringRef = StringRef((const char*)m_Tokenizer.getPosition(), size_t(size));
+        stringRef = StringRef((const char*)m_Tokenizer.position(), size_t(size));
         return m_Tokenizer.advance(size_t(size));
     }
 
@@ -393,7 +393,7 @@ namespace YubJson
         }
 
         bool hasType = false;
-        if (m_Tokenizer.getTokenType() == TokenType::ValueType)
+        if (m_Tokenizer.tokenType() == TokenType::ValueType)
         {
             char tmp;
             if (!readRawValue(tmp))
@@ -404,7 +404,7 @@ namespace YubJson
                 return false;
         }
 
-        if (m_Tokenizer.getTokenType() == TokenType::Count)
+        if (m_Tokenizer.tokenType() == TokenType::Count)
         {
             if (!readCompatibleValue(info.length))
                 return false;
@@ -424,6 +424,6 @@ namespace YubJson
 
     bool Reader::readTokenType(TokenType type)
     {
-        return m_Tokenizer.nextToken() && m_Tokenizer.getTokenType() == type;
+        return m_Tokenizer.nextToken() && m_Tokenizer.tokenType() == type;
     }
 }

@@ -7,6 +7,8 @@
 //****************************************************************************
 #pragma once
 
+#include <ostream>
+
 namespace YubJson
 {
     enum class ValueType : char
@@ -28,4 +30,9 @@ namespace YubJson
         ObjectValue = '{',
         ArrayValue = '['
     };
+
+    inline std::ostream& operator<<(std::ostream& os, ValueType valueType)
+    {
+        return os << static_cast<char>(valueType);
+    }
 }

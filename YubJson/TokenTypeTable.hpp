@@ -19,32 +19,32 @@ namespace YubJson
         TokenTypeTable()
             : m_TokenTypes()
         {
-            m_TokenTypes['#'] = static_cast<TokenType>('#');
-            m_TokenTypes['$'] = static_cast<TokenType>('$');
-            m_TokenTypes['['] = static_cast<TokenType>('[');
-            m_TokenTypes[']'] = static_cast<TokenType>(']');
-            m_TokenTypes['C'] = static_cast<TokenType>('C');
-            m_TokenTypes['d'] = static_cast<TokenType>('d');
-            m_TokenTypes['D'] = static_cast<TokenType>('D');
-            m_TokenTypes['F'] = static_cast<TokenType>('F');
-            m_TokenTypes['i'] = static_cast<TokenType>('i');
-            m_TokenTypes['I'] = static_cast<TokenType>('I');
-            m_TokenTypes['l'] = static_cast<TokenType>('l');
-            m_TokenTypes['L'] = static_cast<TokenType>('L');
-            m_TokenTypes['N'] = static_cast<TokenType>('N');
-            m_TokenTypes['S'] = static_cast<TokenType>('S');
-            m_TokenTypes['T'] = static_cast<TokenType>('T');
-            m_TokenTypes['U'] = static_cast<TokenType>('U');
-            m_TokenTypes['Z'] = static_cast<TokenType>('Z');
-            m_TokenTypes['{'] = static_cast<TokenType>('{');
-            m_TokenTypes['}'] = static_cast<TokenType>('}');
+            m_TokenTypes[int('#')] = static_cast<TokenType>('#');
+            m_TokenTypes[int('$')] = static_cast<TokenType>('$');
+            m_TokenTypes[int('[')] = static_cast<TokenType>('[');
+            m_TokenTypes[int(']')] = static_cast<TokenType>(']');
+            m_TokenTypes[int('C')] = static_cast<TokenType>('C');
+            m_TokenTypes[int('d')] = static_cast<TokenType>('d');
+            m_TokenTypes[int('D')] = static_cast<TokenType>('D');
+            m_TokenTypes[int('F')] = static_cast<TokenType>('F');
+            m_TokenTypes[int('i')] = static_cast<TokenType>('i');
+            m_TokenTypes[int('I')] = static_cast<TokenType>('I');
+            m_TokenTypes[int('l')] = static_cast<TokenType>('l');
+            m_TokenTypes[int('L')] = static_cast<TokenType>('L');
+            m_TokenTypes[int('N')] = static_cast<TokenType>('N');
+            m_TokenTypes[int('S')] = static_cast<TokenType>('S');
+            m_TokenTypes[int('T')] = static_cast<TokenType>('T');
+            m_TokenTypes[int('U')] = static_cast<TokenType>('U');
+            m_TokenTypes[int('Z')] = static_cast<TokenType>('Z');
+            m_TokenTypes[int('{')] = static_cast<TokenType>('{');
+            m_TokenTypes[int('}')] = static_cast<TokenType>('}');
         }
 
         TokenType operator[](char marker) const
         {
             if (marker < 0)
                 return TokenType::UnknownToken;
-            return m_TokenTypes[marker];
+            return m_TokenTypes[int(marker)];
         }
 
     private:
