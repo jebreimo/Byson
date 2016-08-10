@@ -7,9 +7,11 @@
 //****************************************************************************
 #pragma once
 #include <cstdint>
+#include <stack>
 #include <vector>
-#include "YubJsonDefinitions.hpp"
+#include "Endian.hpp"
 #include "ValueType.hpp"
+#include "YubJsonDefinitions.hpp"
 
 namespace YubJson
 {
@@ -18,120 +20,160 @@ namespace YubJson
     public:
         Writer();
 
+        Writer(const std::string& fileName);
+
+        Writer(std::ostream& stream);
+
+        Writer(std::unique_ptr<std::ostream>&& stream);
+
         ~Writer();
 
-        void clear();
+        std::ostream* stream() const;
 
-        const void* buffer() const;
+        void writeBeginObject(int64_t count = -1,
+                              ValueType valueType = ValueType::UndefinedValue);
 
-        size_t size() const;
+        void writeBeginObject(const std::string& name,
+                              int64_t count = -1,
+                              ValueType valueType = ValueType::UndefinedValue);
 
-        void beginObject();
+        void writeEndObject();
 
-        void beginOptimizedObject(size_t count,
-                                  ValueType valueType = ValueType::UndefinedValue);
+        void writeBeginArray(int64_t count = -1,
+                             ValueType valueType = ValueType::UndefinedValue);
 
-        void endObject();
+        void writeBeginArray(const std::string& name,
+                             int64_t count = -1,
+                             ValueType valueType = ValueType::UndefinedValue);
 
-        void beginArray();
+        void writeEndArray();
 
-        void beginOptimizedArray(size_t count,
-                                 ValueType valueType = ValueType::UndefinedValue);
-
-        void endArray();
-
-        void key(const char* key, size_t length);
-
-        void key(const std::string& key);
+        void setValueName(const std::string& name);
 
         void writeNull();
 
+        void writeNull(const std::string& name);
+
         void writeNoOp();
 
-        void write(bool value);
+        void writeBool(bool value);
 
-        void write(int8_t value);
+        void writeBool(const std::string& name, bool value);
 
-        void write(uint8_t value);
+        void writeValue(int8_t value);
 
-        void write(int16_t value);
+        void writeValue(uint8_t value);
 
-        void write(uint16_t value);
+        void writeValue(int16_t value);
 
-        void write(int32_t value);
+        void writeValue(uint16_t value);
 
-        void write(uint32_t value);
+        void writeValue(int32_t value);
 
-        void write(int64_t value);
+        void writeValue(uint32_t value);
 
-        void write(uint64_t value);
+        void writeValue(int64_t value);
 
-        void write(float value);
+        void writeValue(uint64_t value);
 
-        void write(double value);
+        void writeValue(float value);
 
-        void write(char value);
+        void writeValue(double value);
 
-        void write(const char* value, size_t length);
+        void writeValue(char value);
 
-        void write(const std::string& value);
-
-        template <size_t N>
-        void write(const char (& value)[N])
-        {
-            write(value, value[N - 1] ? N : N - 1);
-        }
-
-        void writeShortest(int64_t value);
-
-        void writeRaw(int8_t value);
-
-        void writeRaw(uint8_t value);
-
-        void writeRaw(int16_t value);
-
-        void writeRaw(int32_t value);
-
-        void writeRaw(int64_t value);
-
-        void writeRaw(float value);
-
-        void writeRaw(double value);
-
-        void writeRawChar(char value);
-
-        void writeRaw(const char* value, size_t length);
-
-        void writeRaw(const std::string& value);
+        void writeValue(const std::string& value);
 
         template <typename T>
-        void writeRaw(const T* values, size_t count)
+        void writeValue(const std::string& name, T&& value)
         {
-            auto bufSize = m_Buffer.size();
-            m_Buffer.resize(bufSize + count * sizeof(T));
-            auto alias = reinterpret_cast<const uint8_t*>(values);
-            auto dst = begin(m_Buffer) + bufSize;
-            auto index = sizeof(T);
-            for (auto i = 0; i < count; ++i)
+            setValueName(name);
+            writeValue(value);
+        }
+
+        void writeShortestValue(int64_t value);
+
+        void writeShortestValue(const std::string& name, int64_t value);
+
+        void writeRawValue(int8_t value);
+
+        void writeRawValue(uint8_t value);
+
+        void writeRawValue(int16_t value);
+
+        void writeRawValue(int32_t value);
+
+        void writeRawValue(int64_t value);
+
+        void writeRawValue(float value);
+
+        void writeRawValue(double value);
+
+        void writeRawValue(char value);
+
+        void writeRawValue(const std::string& value);
+
+        void writeShortestRawValue(int64_t value);
+
+        template <typename T>
+        void writeRawValues(const T* values, size_t count)
+        {
+            if (count == 0)
+                return;
+
+            auto nValuesPerBuffer = BUFFER_SIZE / sizeof(T);
+            auto nFullBuffers = count / nValuesPerBuffer;
+            if (nFullBuffers > 0)
             {
-                for (auto j = 0; j < sizeof(T); ++j)
-                    *dst++ = alias[--index];
-                index += 2 * sizeof(T);
+                m_Buffer.resize(nValuesPerBuffer * sizeof(T));
+                for (size_t i = 0; i < nFullBuffers; ++i)
+                {
+                    copyBigEndianValues(values, nValuesPerBuffer,
+                                        m_Buffer.data());
+                    writeRawValues(m_Buffer.data(), m_Buffer.size());
+                }
+            }
+
+            auto nValuesInFinalBuffer = count % nValuesPerBuffer;
+            if (nValuesInFinalBuffer > 0)
+            {
+                m_Buffer.resize(nValuesInFinalBuffer * sizeof(T));
+                copyBigEndianValues(values, nValuesInFinalBuffer,
+                                    m_Buffer.data());
+                writeRawValues(m_Buffer.data(), m_Buffer.size());
             }
         }
 
+        void writeRawValues(const char* values, size_t count);
+
+        void writeRawValues(const int8_t* values, size_t count);
+
+        void writeRawValues(const uint8_t* values, size_t count);
     private:
         void writeValueType(ValueType valueType);
 
-        void writeCount(size_t count);
+        void writeCount(int64_t count);
+
+        enum StateFlags
+        {
+            NONE = 0,
+            WRITE_NAME = 1,
+            WRITE_TYPE = 2,
+            WRITE_END_STRUCTURE = 4
+        };
 
         #ifdef _MSC_VER
             #pragma warning(push)
             #pragma warning(disable: 4251)
         #endif
-        std::vector<uint8_t> m_Buffer;
+        std::unique_ptr<std::ostream> m_StreamPtr;
+        std::ostream* m_Stream;
+        std::stack<StateFlags> m_States;
+        std::vector<char> m_Buffer;
+        std::string m_Name;
         #ifdef _MSC_VER
             #pragma warning(pop)
         #endif
+        static constexpr size_t BUFFER_SIZE = 16 * 1024;
     };
 }
