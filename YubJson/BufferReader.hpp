@@ -19,12 +19,12 @@
 
 namespace YubJson
 {
-    class UBJSON_API Reader
+    class UBJSON_API BufferReader
     {
     public:
-        Reader(const void* buffer, size_t size);
+        BufferReader(const void* buffer, size_t size);
 
-        ~Reader();
+        ~BufferReader();
 
         size_t position() const;
 
@@ -144,7 +144,7 @@ namespace YubJson
     };
 
     template <typename T>
-    bool Reader::readArray(std::vector<T>& values)
+    bool BufferReader::readArray(std::vector<T>& values)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
 

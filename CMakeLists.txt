@@ -14,14 +14,14 @@ endif (APPLE)
 set(PUBLIC_HEADER_FILES
     YubJson/ContainerInfo.hpp
     YubJson/Endian.hpp
-    YubJson/Reader.hpp
+    YubJson/BufferReader.hpp
     YubJson/StringRef.hpp
     YubJson/Tokenizer.hpp
     YubJson/TokenizerPositionRestorer.hpp
     YubJson/TokenType.hpp
     YubJson/TokenTypeConversions.hpp
     YubJson/ValueType.hpp
-    YubJson/Writer.hpp
+    YubJson/StreamWriter.hpp
     YubJson/YubJsonDefinitions.hpp)
 
 set(PRIVATE_HEADER_FILES
@@ -29,10 +29,10 @@ set(PRIVATE_HEADER_FILES
 
 set(SOURCE_FILES
     YubJson/ContainerInfo.cpp
-    YubJson/Reader.cpp
+    YubJson/BufferReader.cpp
     YubJson/StringRef.cpp
     YubJson/Tokenizer.cpp
-    YubJson/Writer.cpp)
+    YubJson/StreamWriter.cpp)
 
 add_library(${PROJECT_NAME}
     ${PUBLIC_HEADER_FILES}

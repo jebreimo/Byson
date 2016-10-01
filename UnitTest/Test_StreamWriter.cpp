@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "../Externals/Ytest/Ytest.hpp"
-#include "../YubJson/Writer.hpp"
+#include "../YubJson/StreamWriter.hpp"
 #include "Endian.hpp"
 
 using namespace YubJson;
@@ -16,7 +16,7 @@ namespace
     void test_Object()
     {
         std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        Writer writer(ss);
+        StreamWriter writer(ss);
         writer.writeBeginObject();
         writer.writeValue("name", "JEB");
         writer.writeValue("age", 39);
@@ -33,7 +33,7 @@ namespace
     void test_Array_optimized()
     {
         std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        Writer writer(ss);
+        StreamWriter writer(ss);
         writer.writeBeginArray(6, ValueType::Int16Value);
         int16_t values[4] = {13, 17, 19, 23};
         writer.writeRawValue(int16_t(11));
@@ -52,7 +52,7 @@ namespace
     void checkWriteShortest(int64_t value, char expectedMarker)
     {
         std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        Writer writer(ss);
+        StreamWriter writer(ss);
         writer.writeShortestValue(value);
         auto buffer = ss.str();
         Y_EQUAL(buffer.size(), sizeof(T) + 1);

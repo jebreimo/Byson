@@ -13,7 +13,7 @@ project(${PARENT_PROJECT}Test)
 set(SOURCE_FILES
     main.cpp
     test_Tokenizer.cpp
-    test_Writer.cpp)
+    Test_StreamWriter.cpp)
 
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES})

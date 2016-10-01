@@ -5,37 +5,37 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Reader.hpp"
+#include "BufferReader.hpp"
 
 #include <ostream>
 
 namespace YubJson
 {
-    Reader::Reader(const void* buffer, size_t size)
+    BufferReader::BufferReader(const void* buffer, size_t size)
         : m_Tokenizer(buffer, size), m_Buffer(buffer)
     {}
 
-    Reader::~Reader()
+    BufferReader::~BufferReader()
     {}
 
-    size_t Reader::position() const
+    size_t BufferReader::position() const
     {
         auto diff = (const char*)m_Tokenizer.position()
                     - (const char*)m_Buffer;
         return (size_t)diff;
     }
 
-    void Reader::setPosition(size_t pos)
+    void BufferReader::setPosition(size_t pos)
     {
         m_Tokenizer.setPosition((const char*)m_Buffer + pos);
     }
 
-    bool Reader::isEndOfBuffer() const
+    bool BufferReader::isEndOfBuffer() const
     {
         return m_Tokenizer.isEndOfBuffer();
     }
 
-    bool Reader::readBeginObject(ContainerInfo& info)
+    bool BufferReader::readBeginObject(ContainerInfo& info)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::BeginObject))
@@ -46,7 +46,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readEndObject()
+    bool BufferReader::readEndObject()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::EndObject))
@@ -55,13 +55,13 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::isEndObject() const
+    bool BufferReader::isEndObject() const
     {
         return m_Tokenizer.peekToken()
                == std::make_pair(true, TokenType::EndObject);
     }
 
-    bool Reader::readBeginArray(ContainerInfo& info)
+    bool BufferReader::readBeginArray(ContainerInfo& info)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::BeginArray))
@@ -72,7 +72,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readEndArray()
+    bool BufferReader::readEndArray()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::EndArray))
@@ -81,17 +81,17 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::isEndArray() const
+    bool BufferReader::isEndArray() const
     {
         return m_Tokenizer.peekToken() == std::make_pair(true, TokenType::EndArray);
     }
 
-    bool Reader::readKey(StringRef& stringRef)
+    bool BufferReader::readKey(StringRef& stringRef)
     {
         return readRawValue(stringRef);
     }
 
-    bool Reader::readNull()
+    bool BufferReader::readNull()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::NullValue))
@@ -100,7 +100,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readNoOp()
+    bool BufferReader::readNoOp()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!readTokenType(TokenType::NoOpValue))
@@ -109,7 +109,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readValue(bool& value)
+    bool BufferReader::readValue(bool& value)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!m_Tokenizer.nextToken())
@@ -125,7 +125,7 @@ namespace YubJson
     }
 
     #define IMPLEMENT_READ_VALUE(type, tokenType) \
-        bool Reader::readValue(type& value) \
+        bool BufferReader::readValue(type& value) \
         { \
             TokenizerPositionRestorer tokRestorer(m_Tokenizer); \
             if (!readTokenType(TokenType::tokenType) || !readRawValue(value)) \
@@ -157,7 +157,7 @@ namespace YubJson
     IMPLEMENT_READ_VALUE(StringRef, StringValue)
 
     #define IMPLEMENT_READ_RAW_VALUE(type) \
-        bool Reader::readRawValue(type& value) \
+        bool BufferReader::readRawValue(type& value) \
         { \
             return m_Tokenizer.read(value); \
         }
@@ -182,7 +182,7 @@ namespace YubJson
 
     IMPLEMENT_READ_RAW_VALUE(double);
 
-    bool Reader::readRawValue(StringRef& stringRef)
+    bool BufferReader::readRawValue(StringRef& stringRef)
     {
         int64_t size;
         if (!readCompatibleValue(size))
@@ -201,7 +201,7 @@ namespace YubJson
         } \
         break
 
-    bool Reader::readCompatibleRawValue(int8_t& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(int8_t& value, ValueType type)
     {
         char tmp;
         if (!readCompatibleRawValue(tmp, type))
@@ -210,7 +210,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(uint8_t& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(uint8_t& value, ValueType type)
     {
         char tmp;
         if (!readCompatibleRawValue(tmp, type))
@@ -219,7 +219,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(int16_t& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(int16_t& value, ValueType type)
     {
         switch (type)
         {
@@ -240,7 +240,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(int32_t& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(int32_t& value, ValueType type)
     {
         switch (type)
         {
@@ -262,7 +262,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(int64_t& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(int64_t& value, ValueType type)
     {
         switch (type)
         {
@@ -285,7 +285,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(long& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(long& value, ValueType type)
     {
         int32_t tmp;
         if (!readCompatibleRawValue(tmp, type))
@@ -294,7 +294,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(unsigned& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(unsigned& value, ValueType type)
     {
         int32_t tmp;
         if (!readCompatibleRawValue(tmp, type))
@@ -303,14 +303,14 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(StringRef& stringRef, ValueType type)
+    bool BufferReader::readCompatibleRawValue(StringRef& stringRef, ValueType type)
     {
         if (type != ValueType::StringValue)
             return false;
         return readRawValue(stringRef);
     }
 
-    bool Reader::readCompatibleRawValue(float& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(float& value, ValueType type)
     {
         switch (type)
         {
@@ -334,7 +334,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(double& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(double& value, ValueType type)
     {
         switch (type)
         {
@@ -359,7 +359,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readCompatibleRawValue(char& value, ValueType type)
+    bool BufferReader::readCompatibleRawValue(char& value, ValueType type)
     {
         switch (type)
         {
@@ -379,7 +379,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readContainerInfo(ContainerInfo& info)
+    bool BufferReader::readContainerInfo(ContainerInfo& info)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
 
@@ -422,7 +422,7 @@ namespace YubJson
         return true;
     }
 
-    bool Reader::readTokenType(TokenType type)
+    bool BufferReader::readTokenType(TokenType type)
     {
         return m_Tokenizer.nextToken() && m_Tokenizer.tokenType() == type;
     }

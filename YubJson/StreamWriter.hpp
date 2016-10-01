@@ -15,18 +15,18 @@
 
 namespace YubJson
 {
-    class UBJSON_API Writer
+    class UBJSON_API StreamWriter
     {
     public:
-        Writer();
+        StreamWriter();
 
-        Writer(const std::string& fileName);
+        StreamWriter(const std::string& fileName);
 
-        Writer(std::ostream& stream);
+        StreamWriter(std::ostream& stream);
 
-        Writer(std::unique_ptr<std::ostream>&& stream);
+        StreamWriter(std::unique_ptr<std::ostream>&& stream);
 
-        ~Writer();
+        ~StreamWriter();
 
         std::ostream* stream() const;
 

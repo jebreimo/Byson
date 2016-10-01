@@ -5,7 +5,7 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Writer.hpp"
+#include "StreamWriter.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -49,41 +49,41 @@ namespace YubJson
         }
     }
 
-    Writer::Writer()
+    StreamWriter::StreamWriter()
         : m_Stream(&std::cout)
     {
         m_States.push(StateFlags::NONE);
     }
 
-    Writer::Writer(const std::string& fileName)
+    StreamWriter::StreamWriter(const std::string& fileName)
         : m_StreamPtr(new std::ofstream(fileName, std::ios_base::binary)),
           m_Stream(m_StreamPtr.get())
     {
         m_States.push(StateFlags::NONE);
     }
 
-    Writer::Writer(std::ostream& stream)
+    StreamWriter::StreamWriter(std::ostream& stream)
             : m_Stream(&stream)
     {
         m_States.push(StateFlags::NONE);
     }
 
-    Writer::Writer(std::unique_ptr<std::ostream>&& stream)
+    StreamWriter::StreamWriter(std::unique_ptr<std::ostream>&& stream)
         : m_StreamPtr(std::move(stream)),
           m_Stream(m_StreamPtr.get())
     {
         m_States.push(StateFlags::NONE);
     }
 
-    Writer::~Writer()
+    StreamWriter::~StreamWriter()
     {}
 
-    std::ostream* Writer::stream() const
+    std::ostream* StreamWriter::stream() const
     {
         return m_Stream;
     }
 
-    void Writer::writeBeginObject(int64_t count, ValueType valueType)
+    void StreamWriter::writeBeginObject(int64_t count, ValueType valueType)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -105,7 +105,7 @@ namespace YubJson
         m_States.push(StateFlags(newState));
     }
 
-    void Writer::writeBeginObject(const std::string& name,
+    void StreamWriter::writeBeginObject(const std::string& name,
                                   int64_t count,
                                   ValueType valueType)
     {
@@ -113,14 +113,14 @@ namespace YubJson
         writeBeginObject(count, valueType);
     }
 
-    void Writer::writeEndObject()
+    void StreamWriter::writeEndObject()
     {
         if (m_States.top() & StateFlags::WRITE_END_STRUCTURE)
             m_Stream->put('}');
         m_States.pop();
     }
 
-    void Writer::writeBeginArray(int64_t count, ValueType valueType)
+    void StreamWriter::writeBeginArray(int64_t count, ValueType valueType)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -142,26 +142,26 @@ namespace YubJson
         m_States.push(StateFlags(newState));
     }
 
-    void Writer::writeBeginArray(const std::string& name, int64_t count,
+    void StreamWriter::writeBeginArray(const std::string& name, int64_t count,
                                  ValueType valueType)
     {
         setValueName(name);
         writeBeginArray(count, valueType);
     }
 
-    void Writer::writeEndArray()
+    void StreamWriter::writeEndArray()
     {
         if (m_States.top() & StateFlags::WRITE_END_STRUCTURE)
             m_Buffer.push_back('}');
         m_States.pop();
     }
 
-    void Writer::setValueName(const std::string& name)
+    void StreamWriter::setValueName(const std::string& name)
     {
         m_Name = name;
     }
 
-    void Writer::writeNull()
+    void StreamWriter::writeNull()
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -169,13 +169,13 @@ namespace YubJson
             m_Stream->put(uint8_t(ValueType::NullValue));
     }
 
-    void Writer::writeNull(const std::string& name)
+    void StreamWriter::writeNull(const std::string& name)
     {
         setValueName(name);
         writeNull();
     }
 
-    void Writer::writeNoOp()
+    void StreamWriter::writeNoOp()
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -183,7 +183,7 @@ namespace YubJson
             m_Stream->put('N');
     }
 
-    void Writer::writeBool(bool value)
+    void StreamWriter::writeBool(bool value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -191,13 +191,13 @@ namespace YubJson
             m_Stream->put(value ? 'T' : 'F');
     }
 
-    void Writer::writeBool(const std::string& name, bool value)
+    void StreamWriter::writeBool(const std::string& name, bool value)
     {
         setValueName(name);
         writeBool(value);
     }
 
-    void Writer::writeValue(int8_t value)
+    void StreamWriter::writeValue(int8_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -206,7 +206,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(uint8_t value)
+    void StreamWriter::writeValue(uint8_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -215,7 +215,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(int16_t value)
+    void StreamWriter::writeValue(int16_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -224,7 +224,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(uint16_t value)
+    void StreamWriter::writeValue(uint16_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -233,7 +233,7 @@ namespace YubJson
         writeRawValue(int16_t(value));
     }
 
-    void Writer::writeValue(int32_t value)
+    void StreamWriter::writeValue(int32_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -242,7 +242,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(uint32_t value)
+    void StreamWriter::writeValue(uint32_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -251,7 +251,7 @@ namespace YubJson
         writeRawValue(int32_t(value));
     }
 
-    void Writer::writeValue(int64_t value)
+    void StreamWriter::writeValue(int64_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -260,7 +260,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(uint64_t value)
+    void StreamWriter::writeValue(uint64_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -269,7 +269,7 @@ namespace YubJson
         writeRawValue(int64_t(value));
     }
 
-    void Writer::writeValue(float value)
+    void StreamWriter::writeValue(float value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -278,7 +278,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(double value)
+    void StreamWriter::writeValue(double value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -287,7 +287,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(char value)
+    void StreamWriter::writeValue(char value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -296,7 +296,7 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeValue(const std::string& value)
+    void StreamWriter::writeValue(const std::string& value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
@@ -305,30 +305,30 @@ namespace YubJson
         writeRawValue(value);
     }
 
-    void Writer::writeShortestValue(int64_t value)
+    void StreamWriter::writeShortestValue(int64_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_Name);
         writeShortestRawValue(value);
     }
 
-    void Writer::writeShortestValue(const std::string& name, int64_t value)
+    void StreamWriter::writeShortestValue(const std::string& name, int64_t value)
     {
         setValueName(name);
         writeShortestValue(value);
     }
 
-    void Writer::writeRawValue(int8_t value)
+    void StreamWriter::writeRawValue(int8_t value)
     {
         m_Stream->put(char(value));
     }
 
-    void Writer::writeRawValue(uint8_t value)
+    void StreamWriter::writeRawValue(uint8_t value)
     {
         m_Stream->put(char(value));
     }
 
-    void Writer::writeRawValue(char value)
+    void StreamWriter::writeRawValue(char value)
     {
         m_Stream->put(value);
     }
@@ -340,53 +340,53 @@ namespace YubJson
         stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
     }
 
-    void Writer::writeRawValue(int16_t value)
+    void StreamWriter::writeRawValue(int16_t value)
     {
         writeImpl(*m_Stream, value);
     }
 
-    void Writer::writeRawValue(int32_t value)
+    void StreamWriter::writeRawValue(int32_t value)
     {
         writeImpl(*m_Stream, value);
     }
 
-    void Writer::writeRawValue(int64_t value)
+    void StreamWriter::writeRawValue(int64_t value)
     {
         writeImpl(*m_Stream, value);
     }
 
-    void Writer::writeRawValue(float value)
+    void StreamWriter::writeRawValue(float value)
     {
         writeImpl(*m_Stream, value);
     }
 
-    void Writer::writeRawValue(double value)
+    void StreamWriter::writeRawValue(double value)
     {
         writeImpl(*m_Stream, value);
     }
 
-    void Writer::writeRawValue(const std::string& value)
+    void StreamWriter::writeRawValue(const std::string& value)
     {
         writeShortestRawValue(int64_t(value.size()));
         m_Stream->write(value.data(), value.size());
     }
 
-    void Writer::writeRawValues(const char* values, size_t count)
+    void StreamWriter::writeRawValues(const char* values, size_t count)
     {
         m_Stream->write(values, count);
     }
 
-    void Writer::writeRawValues(const int8_t* values, size_t count)
+    void StreamWriter::writeRawValues(const int8_t* values, size_t count)
     {
         m_Stream->write(reinterpret_cast<const char*>(values), count);
     }
 
-    void Writer::writeRawValues(const uint8_t* values, size_t count)
+    void StreamWriter::writeRawValues(const uint8_t* values, size_t count)
     {
         m_Stream->write(reinterpret_cast<const char*>(values), count);
     }
 
-    void Writer::writeShortestRawValue(int64_t value)
+    void StreamWriter::writeShortestRawValue(int64_t value)
     {
         if (value >= -0x80LL)
         {
@@ -433,13 +433,13 @@ namespace YubJson
         }
     }
 
-    void Writer::writeValueType(ValueType valueType)
+    void StreamWriter::writeValueType(ValueType valueType)
     {
         char str[2] = {'$', char(valueType)};
         m_Stream->write(str, 2);
     }
 
-    void Writer::writeCount(int64_t count)
+    void StreamWriter::writeCount(int64_t count)
     {
         m_Stream->put('#');
         writeShortestRawValue(int64_t(count));
