@@ -11,7 +11,7 @@
 
 #include <cstdint>
 
-namespace YubJson
+namespace Byson
 {
     template <typename T>
     struct TypeToValueType

@@ -10,7 +10,7 @@
 
 namespace
 {
-    using namespace YubJson;
+    using namespace Byson;
 
     void checkNextToken(Tokenizer& tokenizer, TokenType expectedTokenType)
     {

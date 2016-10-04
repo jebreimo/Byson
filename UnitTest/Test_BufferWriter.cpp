@@ -8,7 +8,7 @@
 #include "../Byson/BufferWriter.hpp"
 #include "../Externals/Ytest/Ytest.hpp"
 
-using namespace YubJson;
+using namespace Byson;
 
 namespace
 {

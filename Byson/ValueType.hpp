@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-namespace YubJson
+namespace Byson
 {
     enum class ValueType : char
     {

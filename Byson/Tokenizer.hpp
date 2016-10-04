@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <utility>
 
-namespace YubJson
+namespace Byson
 {
     class BYSON_API Tokenizer
     {

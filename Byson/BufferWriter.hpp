@@ -13,7 +13,7 @@
 #include "Endian.hpp"
 #include "ValueType.hpp"
 
-namespace YubJson
+namespace Byson
 {
     class BYSON_API BufferWriter
     {

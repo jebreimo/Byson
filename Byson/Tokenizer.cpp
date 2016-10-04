@@ -9,7 +9,7 @@
 
 #include "TokenTypeTable.hpp"
 
-namespace YubJson
+namespace Byson
 {
     namespace
     {

@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-namespace YubJson
+namespace Byson
 {
     BufferReader::BufferReader(const void* buffer, size_t size)
         : m_Tokenizer(buffer, size), m_Buffer(buffer)

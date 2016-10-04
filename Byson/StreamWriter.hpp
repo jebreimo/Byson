@@ -13,7 +13,7 @@
 #include "ValueType.hpp"
 #include "BysonDefinitions.hpp"
 
-namespace YubJson
+namespace Byson
 {
     class BYSON_API StreamWriter
     {

@@ -7,7 +7,7 @@
 //****************************************************************************
 #include "BufferWriter.hpp"
 
-namespace YubJson
+namespace Byson
 {
     namespace
     {

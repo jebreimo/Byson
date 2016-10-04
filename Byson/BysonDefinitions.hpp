@@ -15,7 +15,7 @@
     #ifdef _DEBUG
       #pragma comment (lib, "YubJsonD.lib")
     #else
-      #pragma comment (lib, "YubJson.lib")
+      #pragma comment (lib, "Byson.lib")
     #endif
   #endif
 #else

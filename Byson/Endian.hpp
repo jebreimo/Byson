@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace YubJson
+namespace Byson
 {
     #ifdef IS_BIG_ENDIAN
 

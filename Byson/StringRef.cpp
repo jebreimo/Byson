@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-namespace YubJson
+namespace Byson
 {
     std::string getString(const StringRef& sr)
     {

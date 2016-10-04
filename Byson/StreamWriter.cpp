@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace YubJson
+namespace Byson
 {
     namespace
     {

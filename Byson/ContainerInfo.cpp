@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-namespace YubJson
+namespace Byson
 {
     bool operator==(const ContainerInfo& a, const ContainerInfo& b)
     {

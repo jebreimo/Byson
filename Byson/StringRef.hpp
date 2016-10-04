@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <iosfwd>
 
-namespace YubJson
+namespace Byson
 {
     struct StringRef
     {

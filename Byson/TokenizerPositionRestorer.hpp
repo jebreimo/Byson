@@ -8,7 +8,7 @@
 #pragma once
 #include "Tokenizer.hpp"
 
-namespace YubJson
+namespace Byson
 {
     class TokenizerPositionRestorer
     {

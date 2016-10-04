@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace YubJson
+namespace Byson
 {
     class BYSON_API BufferReader
     {

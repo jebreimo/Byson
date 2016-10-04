@@ -11,7 +11,7 @@
 #include "TokenType.hpp"
 #include "BysonDefinitions.hpp"
 
-namespace YubJson
+namespace Byson
 {
     class TokenTypeTable
     {

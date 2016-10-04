@@ -8,7 +8,7 @@
 #pragma once
 #include <ostream>
 
-namespace YubJson
+namespace Byson
 {
     enum class TokenType : char
     {

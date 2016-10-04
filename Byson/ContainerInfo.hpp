@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <iosfwd>
 
-namespace YubJson
+namespace Byson
 {
     struct ContainerInfo
     {
