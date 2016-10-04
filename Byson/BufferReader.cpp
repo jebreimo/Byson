@@ -305,9 +305,7 @@ namespace YubJson
 
     bool BufferReader::readCompatibleRawValue(StringRef& stringRef, ValueType type)
     {
-        if (type != ValueType::StringValue)
-            return false;
-        return readRawValue(stringRef);
+        return type == ValueType::StringValue && readRawValue(stringRef);
     }
 
     bool BufferReader::readCompatibleRawValue(float& value, ValueType type)

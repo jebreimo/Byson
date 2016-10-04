@@ -5,7 +5,7 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "../YubJson/BufferWriter.hpp"
+#include "../Byson/BufferWriter.hpp"
 #include "../Externals/Ytest/Ytest.hpp"
 
 using namespace YubJson;

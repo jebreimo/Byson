@@ -7,7 +7,7 @@
 //****************************************************************************
 #pragma once
 #include "ValueType.hpp"
-#include "YubJsonDefinitions.hpp"
+#include "BysonDefinitions.hpp"
 
 #include <cstdint>
 #include <iosfwd>
@@ -30,9 +30,9 @@ namespace YubJson
         ValueType type;
     };
 
-    UBJSON_API bool operator==(const ContainerInfo& a, const ContainerInfo& b);
+    BYSON_API bool operator==(const ContainerInfo& a, const ContainerInfo& b);
 
-    UBJSON_API bool operator!=(const ContainerInfo& a, const ContainerInfo& b);
+    BYSON_API bool operator!=(const ContainerInfo& a, const ContainerInfo& b);
 
-    UBJSON_API std::ostream& operator<<(std::ostream& os, const ContainerInfo& info);
+    BYSON_API std::ostream& operator<<(std::ostream& os, const ContainerInfo& info);
 }

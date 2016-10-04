@@ -7,14 +7,14 @@
 //****************************************************************************
 #pragma once
 #include "TokenType.hpp"
-#include "YubJsonDefinitions.hpp"
+#include "BysonDefinitions.hpp"
 
 #include <cstdint>
 #include <utility>
 
 namespace YubJson
 {
-    class UBJSON_API Tokenizer
+    class BYSON_API Tokenizer
     {
     public:
         Tokenizer(const void* buffer, size_t size);

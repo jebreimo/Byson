@@ -26,7 +26,7 @@ namespace YubJson
     static const bool IsLittleEndian = !IsBigEndian;
 
     template <size_t N>
-    inline void reverseBytes(char* value)
+    inline void reverseBytes(char* /*value*/)
     {}
 
     template <>

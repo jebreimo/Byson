@@ -9,13 +9,13 @@
 #include <cstdint>
 #include <stack>
 #include <vector>
-#include "YubJsonDefinitions.hpp"
+#include "BysonDefinitions.hpp"
 #include "Endian.hpp"
 #include "ValueType.hpp"
 
 namespace YubJson
 {
-    class UBJSON_API BufferWriter
+    class BYSON_API BufferWriter
     {
     public:
         BufferWriter();

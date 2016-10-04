@@ -11,11 +11,11 @@
 #include <vector>
 #include "Endian.hpp"
 #include "ValueType.hpp"
-#include "YubJsonDefinitions.hpp"
+#include "BysonDefinitions.hpp"
 
 namespace YubJson
 {
-    class UBJSON_API StreamWriter
+    class BYSON_API StreamWriter
     {
     public:
         StreamWriter();

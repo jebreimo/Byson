@@ -19,7 +19,7 @@
 
 namespace YubJson
 {
-    class UBJSON_API BufferReader
+    class BYSON_API BufferReader
     {
     public:
         BufferReader(const void* buffer, size_t size);
@@ -187,7 +187,7 @@ namespace YubJson
                 T value;
                 if (!readCompatibleValue(value))
                     return false;
-                values.push_back(static_cast<T>(value));
+                values.push_back(value);
             }
             if (!readEndArray())
                 return false;

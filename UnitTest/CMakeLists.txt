@@ -7,7 +7,7 @@
 ##****************************************************************************
 cmake_minimum_required(VERSION 3.2)
 
-set(PARENT_PROJECT YubJson)
+set(PARENT_PROJECT Byson)
 project(${PARENT_PROJECT}Test)
 
 set(SOURCE_FILES

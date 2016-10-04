@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <vector>
 #include "TokenType.hpp"
-#include "YubJsonDefinitions.hpp"
+#include "BysonDefinitions.hpp"
 
 namespace YubJson
 {

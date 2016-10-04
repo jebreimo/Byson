@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "../Externals/Ytest/Ytest.hpp"
-#include "../YubJson/Tokenizer.hpp"
+#include "../Byson/Tokenizer.hpp"
 
 namespace
 {

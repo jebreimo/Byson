@@ -8,10 +8,10 @@
 #pragma once
 
 #ifdef _WIN32
-  #ifdef UBJSON_EXPORTS
-    #define UBJSON_API __declspec(dllexport)
+  #ifdef BYSON_EXPORTS
+    #define BYSON_API __declspec(dllexport)
   #else
-    #define UBJSON_API __declspec(dllimport)
+    #define BYSON_API __declspec(dllimport)
     #ifdef _DEBUG
       #pragma comment (lib, "YubJsonD.lib")
     #else
@@ -19,5 +19,5 @@
     #endif
   #endif
 #else
-  #define UBJSON_API
+  #define BYSON_API
 #endif
