@@ -5,72 +5,61 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "StreamWriter.hpp"
-#include <iostream>
-#include <fstream>
+#include "BufferWriter.hpp"
 
 namespace YubJson
 {
     namespace
     {
         template <typename T>
-        void writeImpl(std::ostream& stream, T rawValue)
+        void append(std::vector<uint8_t>& vec, T rawValue)
         {
             auto value = bigEndian(rawValue);
-            stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
+            auto alias = reinterpret_cast<const uint8_t*>(&value);
+            vec.insert(vec.end(), alias, alias + sizeof(T));
         }
 
-        template <typename T>
-        void append(std::vector<char>& vec, T value)
+        void append(std::vector<uint8_t>& vec, const std::string& value)
         {
-            vec.resize(vec.size() + sizeof(T));
-            auto dst = vec.end();
-            auto alias = reinterpret_cast<const char*>(&value);
-            for (auto i = 0; i < sizeof(T); ++i)
-                *--dst = alias[i];
+            vec.insert(end(vec), begin(value), end(value));
         }
     }
 
-    StreamWriter::StreamWriter()
-        : m_Stream(&std::cout)
+    BufferWriter::BufferWriter()
     {
         m_States.push(StateFlags::DEFAULT);
     }
 
-    StreamWriter::StreamWriter(const std::string& fileName)
-        : m_StreamPtr(new std::ofstream(fileName, std::ios_base::binary)),
-          m_Stream(m_StreamPtr.get())
+    BufferWriter::BufferWriter(std::vector<uint8_t>&& buffer)
+        : m_Buffer(std::move(buffer))
     {
         m_States.push(StateFlags::DEFAULT);
     }
 
-    StreamWriter::StreamWriter(std::ostream& stream)
-            : m_Stream(&stream)
-    {
-        m_States.push(StateFlags::DEFAULT);
-    }
-
-    StreamWriter::StreamWriter(std::unique_ptr<std::ostream>&& stream)
-        : m_StreamPtr(std::move(stream)),
-          m_Stream(m_StreamPtr.get())
-    {
-        m_States.push(StateFlags::DEFAULT);
-    }
-
-    StreamWriter::~StreamWriter()
+    BufferWriter::~BufferWriter()
     {}
 
-    std::ostream* StreamWriter::stream() const
+    void BufferWriter::clear()
     {
-        return m_Stream;
+        m_Buffer.clear();
     }
 
-    void StreamWriter::writeBeginObject(int64_t count, ValueType valueType)
+    const void* BufferWriter::buffer() const
+    {
+        return &m_Buffer[0];
+    }
+
+    size_t BufferWriter::size() const
+    {
+        return m_Buffer.size();
+    }
+
+    void BufferWriter::writeBeginObject(int64_t count, ValueType valueType)
     {
         writePrefix(ValueType::ObjectValue);
 
         int newState = StateFlags::WRITE_NAME;
-        if (count >= 0)
+        if (count >= 0 && (m_States.top() & WRITE_END_STRUCTURE))
         {
             if (valueType != ValueType::UndefinedValue)
                 writeValueType(valueType);
@@ -85,7 +74,7 @@ namespace YubJson
         m_States.push(StateFlags(newState));
     }
 
-    void StreamWriter::writeBeginObject(const std::string& name,
+    void BufferWriter::writeBeginObject(const std::string& name,
                                         int64_t count,
                                         ValueType valueType)
     {
@@ -93,19 +82,19 @@ namespace YubJson
         writeBeginObject(count, valueType);
     }
 
-    void StreamWriter::writeEndObject()
+    void BufferWriter::writeEndObject()
     {
         if (m_States.top() & StateFlags::WRITE_END_STRUCTURE)
-            m_Stream->put('}');
+            m_Buffer.push_back('}');
         m_States.pop();
     }
 
-    void StreamWriter::writeBeginArray(int64_t count, ValueType valueType)
+    void BufferWriter::writeBeginArray(int64_t count, ValueType valueType)
     {
         writePrefix(ValueType::ArrayValue);
 
         int newState = StateFlags::NONE;
-        if (count >= 0)
+        if (count >= 0 && (m_States.top() & WRITE_END_STRUCTURE))
         {
             if (valueType != ValueType::UndefinedValue)
                 writeValueType(valueType);
@@ -120,7 +109,7 @@ namespace YubJson
         m_States.push(StateFlags(newState));
     }
 
-    void StreamWriter::writeBeginArray(const std::string& name,
+    void BufferWriter::writeBeginArray(const std::string& name,
                                        int64_t count,
                                        ValueType valueType)
     {
@@ -128,255 +117,260 @@ namespace YubJson
         writeBeginArray(count, valueType);
     }
 
-    void StreamWriter::writeEndArray()
+    void BufferWriter::writeEndArray()
     {
         if (m_States.top() & StateFlags::WRITE_END_STRUCTURE)
-            m_Buffer.push_back('}');
+            m_Buffer.push_back(']');
         m_States.pop();
     }
 
-    void StreamWriter::setValueName(const std::string& name)
+    void BufferWriter::setValueName(const std::string& name)
     {
         m_ValueName = name;
     }
 
-    void StreamWriter::writeNull()
+    void BufferWriter::writeNull()
     {
         writePrefix(ValueType::NullValue);
     }
 
-    void StreamWriter::writeNull(const std::string& name)
+    void BufferWriter::writeNull(const std::string& name)
     {
         setValueName(name);
         writeNull();
     }
 
-    void StreamWriter::writeNoOp()
+    void BufferWriter::writeNoOp()
     {
         writePrefix(ValueType::NoOpValue);
     }
 
-    void StreamWriter::writeBool(bool value)
+    void BufferWriter::writeBool(bool value)
     {
         writePrefix(value ? ValueType::TrueValue : ValueType::FalseValue);
     }
 
-    void StreamWriter::writeBool(const std::string& name, bool value)
+    void BufferWriter::writeBool(const std::string& name, bool value)
     {
         setValueName(name);
         writeBool(value);
     }
 
-    void StreamWriter::writeValue(int8_t value)
+    void BufferWriter::writeValue(int8_t value)
     {
         writePrefix(ValueType::Int8Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(uint8_t value)
+    void BufferWriter::writeValue(uint8_t value)
     {
         writePrefix(ValueType::UInt8Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(int16_t value)
+    void BufferWriter::writeValue(int16_t value)
     {
         writePrefix(ValueType::Int16Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(uint16_t value)
+    void BufferWriter::writeValue(uint16_t value)
     {
         writePrefix(ValueType::Int16Value);
         writeRawValue(int16_t(value));
     }
 
-    void StreamWriter::writeValue(int32_t value)
+    void BufferWriter::writeValue(int32_t value)
     {
         writePrefix(ValueType::Int32Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(uint32_t value)
+    void BufferWriter::writeValue(uint32_t value)
     {
         writePrefix(ValueType::Int32Value);
         writeRawValue(int32_t(value));
     }
 
-    void StreamWriter::writeValue(int64_t value)
+    void BufferWriter::writeValue(int64_t value)
     {
         writePrefix(ValueType::Int64Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(uint64_t value)
+    void BufferWriter::writeValue(uint64_t value)
     {
         writePrefix(ValueType::Int64Value);
         writeRawValue(int64_t(value));
     }
 
-    void StreamWriter::writeValue(float value)
+    void BufferWriter::writeValue(float value)
     {
         writePrefix(ValueType::Float32Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(double value)
+    void BufferWriter::writeValue(double value)
     {
         writePrefix(ValueType::Float64Value);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(char value)
+    void BufferWriter::writeValue(char value)
     {
         writePrefix(ValueType::CharValue);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeValue(const std::string& value)
+    void BufferWriter::writeValue(const std::string& value)
     {
         writePrefix(ValueType::StringValue);
         writeRawValue(value);
     }
 
-    void StreamWriter::writeShortestValue(int64_t value)
+    void BufferWriter::writeShortestValue(int64_t value)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_ValueName);
         writeShortestRawValue(value);
     }
 
-    void StreamWriter::writeShortestValue(const std::string& name, int64_t value)
+    void BufferWriter::writeShortestValue(const std::string& name, int64_t value)
     {
         setValueName(name);
         writeShortestValue(value);
     }
 
-    void StreamWriter::writeRawValue(int8_t value)
+    void BufferWriter::writeRawValue(int8_t value)
     {
-        m_Stream->put(char(value));
+        m_Buffer.push_back(uint8_t(value));
     }
 
-    void StreamWriter::writeRawValue(uint8_t value)
+    void BufferWriter::writeRawValue(uint8_t value)
     {
-        m_Stream->put(char(value));
+        m_Buffer.push_back(value);
     }
 
-    void StreamWriter::writeRawValue(char value)
+    void BufferWriter::writeRawValue(char value)
     {
-        m_Stream->put(value);
+        m_Buffer.push_back(uint8_t(value));
     }
 
-    void StreamWriter::writeRawValue(int16_t value)
+    void BufferWriter::writeRawValue(int16_t value)
     {
-        writeImpl(*m_Stream, value);
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValue(int32_t value)
+    void BufferWriter::writeRawValue(int32_t value)
     {
-        writeImpl(*m_Stream, value);
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValue(int64_t value)
+    void BufferWriter::writeRawValue(int64_t value)
     {
-        writeImpl(*m_Stream, value);
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValue(float value)
+    void BufferWriter::writeRawValue(float value)
     {
-        writeImpl(*m_Stream, value);
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValue(double value)
+    void BufferWriter::writeRawValue(double value)
     {
-        writeImpl(*m_Stream, value);
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValue(const std::string& value)
+    void BufferWriter::writeRawValue(const std::string& value)
     {
         writeShortestRawValue(int64_t(value.size()));
-        m_Stream->write(value.data(), value.size());
+        append(m_Buffer, value);
     }
 
-    void StreamWriter::writeRawValues(const char* values, size_t count)
+    void BufferWriter::writeRawValues(const char* values, size_t count)
     {
-        m_Stream->write(values, count);
+        writeRawValues(reinterpret_cast<const uint8_t*>(values), count);
     }
 
-    void StreamWriter::writeRawValues(const int8_t* values, size_t count)
+    void BufferWriter::writeRawValues(const int8_t* values, size_t count)
     {
-        writeRawValues(reinterpret_cast<const char*>(values), count);
+        writeRawValues(reinterpret_cast<const uint8_t*>(values), count);
     }
 
-    void StreamWriter::writeRawValues(const uint8_t* values, size_t count)
+    void BufferWriter::writeRawValues(const uint8_t* values, size_t count)
     {
-        writeRawValues(reinterpret_cast<const char*>(values), count);
+        m_Buffer.insert(end(m_Buffer), values, values + count);
     }
 
-    void StreamWriter::writeShortestRawValue(int64_t value)
+    void BufferWriter::writeShortestRawValue(int64_t value)
     {
         if (value >= -0x80LL)
         {
             if (value < 0x80LL)
             {
-                m_Stream->put(char(ValueType::Int8Value));
+                m_Buffer.push_back(uint8_t(ValueType::Int8Value));
                 writeRawValue(static_cast<int8_t>(value));
             }
             else if (value < 0x100LL)
             {
-                m_Stream->put(char(ValueType::UInt8Value));
+                m_Buffer.push_back(uint8_t(ValueType::UInt8Value));
                 writeRawValue(static_cast<uint8_t>(value));
             }
             else if (value < 0x8000LL)
             {
-                m_Stream->put(char(ValueType::Int16Value));
+                m_Buffer.push_back(uint8_t(ValueType::Int16Value));
                 writeRawValue(static_cast<int16_t>(value));
             }
             else if (value < 0x80000000LL)
             {
-                m_Stream->put(char(ValueType::Int32Value));
+                m_Buffer.push_back(uint8_t(ValueType::Int32Value));
                 writeRawValue(static_cast<int32_t>(value));
             }
             else
             {
-                m_Stream->put(char(ValueType::Int64Value));
+                m_Buffer.push_back(uint8_t(ValueType::Int64Value));
                 writeRawValue(value);
             }
         }
         else if (value >= -0x8000LL)
         {
-            m_Stream->put(char(ValueType::Int16Value));
+            m_Buffer.push_back(uint8_t(ValueType::Int16Value));
             writeRawValue(static_cast<int16_t>(value));
         }
         else if (value >= -0x80000000LL)
         {
-            m_Stream->put(char(ValueType::Int32Value));
+            m_Buffer.push_back(uint8_t(ValueType::Int32Value));
             writeRawValue(static_cast<int32_t>(value));
         }
         else
         {
-            m_Stream->put(char(ValueType::Int64Value));
+            m_Buffer.push_back(uint8_t(ValueType::Int64Value));
             writeRawValue(value);
         }
     }
 
-    void StreamWriter::writePrefix(ValueType valueType)
+    std::vector<uint8_t>& BufferWriter::vector()
+    {
+        return m_Buffer;
+    }
+
+    void BufferWriter::writePrefix(ValueType valueType)
     {
         if (m_States.top() & StateFlags::WRITE_NAME)
             writeRawValue(m_ValueName);
         if (m_States.top() & StateFlags::WRITE_TYPE)
-            m_Stream->put(char(valueType));
+            m_Buffer.push_back(uint8_t(valueType));
     }
 
-    void StreamWriter::writeValueType(ValueType valueType)
+    void BufferWriter::writeValueType(ValueType valueType)
     {
-        char str[2] = {'$', char(valueType)};
-        m_Stream->write(str, 2);
+        m_Buffer.push_back('$');
+        m_Buffer.push_back(uint8_t(valueType));
     }
 
-    void StreamWriter::writeCount(int64_t count)
+    void BufferWriter::writeCount(int64_t count)
     {
-        m_Stream->put('#');
-        writeShortestRawValue(int64_t(count));
+        m_Buffer.push_back('#');
+        writeShortestValue(int64_t(count));
     }
 }

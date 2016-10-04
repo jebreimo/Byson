@@ -15,13 +15,14 @@ set(PUBLIC_HEADER_FILES
     YubJson/ContainerInfo.hpp
     YubJson/Endian.hpp
     YubJson/BufferReader.hpp
+    YubJson/BufferWriter.hpp
+    YubJson/StreamWriter.hpp
     YubJson/StringRef.hpp
     YubJson/Tokenizer.hpp
     YubJson/TokenizerPositionRestorer.hpp
     YubJson/TokenType.hpp
     YubJson/TokenTypeConversions.hpp
     YubJson/ValueType.hpp
-    YubJson/StreamWriter.hpp
     YubJson/YubJsonDefinitions.hpp)
 
 set(PRIVATE_HEADER_FILES
@@ -30,6 +31,7 @@ set(PRIVATE_HEADER_FILES
 set(SOURCE_FILES
     YubJson/ContainerInfo.cpp
     YubJson/BufferReader.cpp
+    YubJson/BufferWriter.cpp
     YubJson/StringRef.cpp
     YubJson/Tokenizer.cpp
     YubJson/StreamWriter.cpp)

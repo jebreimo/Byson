@@ -5,7 +5,7 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "../YubJson/StreamWriter.hpp"
+#include "../YubJson/BufferWriter.hpp"
 #include "../Externals/Ytest/Ytest.hpp"
 
 using namespace YubJson;
@@ -14,47 +14,83 @@ namespace
 {
     void test_Object()
     {
-        std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        StreamWriter writer(ss);
+        BufferWriter writer;
         writer.writeBeginObject();
         writer.writeValue("name", "JEB");
         writer.writeValue("age", 39);
         writer.writeEndObject();
-        auto buffer = ss.str();
 
         uint8_t expected[] = {
                 '{', 'i', 4, 'n', 'a', 'm', 'e', 'S', 'i', 3, 'J', 'E', 'B',
                 'i', 3, 'a', 'g', 'e', 'l', 0, 0, 0, 39, '}'};
-        Y_EQUAL(buffer.size(), sizeof(expected));
-        Y_ASSERT(memcmp(buffer.data(), expected, buffer.size()) == 0);
+        Y_EQUAL(writer.size(), sizeof(expected));
+        Y_ASSERT(memcmp(writer.buffer(), expected, writer.size()) == 0);
     }
 
     void test_Array_optimized()
     {
-        std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        StreamWriter writer(ss);
+        BufferWriter writer;
         writer.writeBeginArray(6, ValueType::Int16Value);
         int16_t values[4] = {13, 17, 19, 23};
         writer.writeRawValue(int16_t(11));
         writer.writeRawValues(values, sizeof(values) / sizeof(*values));
         writer.writeRawValue(int16_t(29));
         writer.writeEndArray();
-        auto buffer = ss.str();
 
-        std::string expected{
+        uint8_t expected[] = {
                 '[', '$', 'I', '#', 'i', 6, 0, 11, 0, 13, 0, 17, 0, 19, 0, 23,
                 0, 29};
-        Y_EQUAL_RANGES(buffer, expected);
+        Y_EQUAL(writer.size(), sizeof(expected));
+        Y_ASSERT(memcmp(writer.buffer(), expected, writer.size()) == 0);
+    }
+
+    void test_Optimized_array_of_arrays()
+    {
+        BufferWriter writer;
+        writer.writeBeginArray(2, ValueType::ArrayValue);
+        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeValue(int8_t(1));
+        writer.writeValue(int8_t(2));
+        writer.writeEndArray();
+        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeValue(int8_t(3));
+        writer.writeValue(int8_t(4));
+        writer.writeEndArray();
+        writer.writeEndArray();
+
+        std::vector<uint8_t> expected {
+                '[', '$', '[', '#', 'i', 2, 'i', 1, 'i', 2, ']', 'i', 3, 'i',
+                4, ']'};
+        Y_EQUAL_RANGES(writer.vector(), expected);
+    }
+
+    void test_Array_of_optimized_arrays()
+    {
+        BufferWriter writer;
+        writer.writeBeginArray();
+        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeValue(int8_t(1));
+        writer.writeValue(int8_t(2));
+        writer.writeEndArray();
+        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeValue(int8_t(3));
+        writer.writeValue(int8_t(4));
+        writer.writeEndArray();
+        writer.writeEndArray();
+
+        std::vector<uint8_t> expected{
+                '[', '[', '$', 'i', '#', 'i', 2, 1, 2, '[', '$', 'i',
+                '#', 'i', 2, 3, 4, ']'};
+        Y_EQUAL_RANGES(writer.vector(), expected);
     }
 
     template <typename T>
     void checkWriteShortest(int64_t value, char expectedMarker)
     {
-        std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
-        StreamWriter writer(ss);
+        BufferWriter writer;
         writer.writeShortestValue(value);
-        auto buffer = ss.str();
-        Y_EQUAL(buffer.size(), sizeof(T) + 1);
+        Y_EQUAL(writer.size(), sizeof(T) + 1);
+        auto buffer = static_cast<const uint8_t*>(writer.buffer());
         Y_EQUAL(buffer[0], expectedMarker);
         auto expectedValue = static_cast<T>(value);
         Y_EQUAL(*reinterpret_cast<const T*>(&buffer[1]),
@@ -81,5 +117,9 @@ namespace
         Y_CALL(checkWriteShortest<int64_t>(-2147483649ll, 'L'));
     }
 
-    Y_TEST(test_Object, test_Array_optimized, test_WriteShortest);
+    Y_TEST(test_Object,
+           test_Array_optimized,
+           test_WriteShortest,
+           test_Optimized_array_of_arrays,
+           test_Array_of_optimized_arrays);
 }
