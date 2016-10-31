@@ -19,7 +19,7 @@ namespace Byson
     Tokenizer::Tokenizer(const void* buffer, size_t size)
         : m_Pos(static_cast<const uint8_t*>(buffer)),
           m_End(static_cast<const uint8_t*>(buffer) + size),
-          m_TokenType(TokenType::UnknownToken)
+          m_TokenType(TokenType::UNKNOWN_TOKEN)
     {}
 
     bool Tokenizer::nextToken()
@@ -38,7 +38,7 @@ namespace Byson
     std::pair<bool, TokenType> Tokenizer::peekToken() const
     {
         if (m_Pos == m_End)
-            return std::make_pair(false, TokenType::UnknownToken);
+            return std::make_pair(false, TokenType::UNKNOWN_TOKEN);
         return std::make_pair(true, s_TokenTypeTable[*m_Pos]);
     }
 
@@ -55,7 +55,7 @@ namespace Byson
     void Tokenizer::setPosition(const void* pos)
     {
         m_Pos = static_cast<const uint8_t*>(pos);
-        m_TokenType = TokenType::UnknownToken;
+        m_TokenType = TokenType::UNKNOWN_TOKEN;
     }
 
     bool Tokenizer::advance(size_t bytes)

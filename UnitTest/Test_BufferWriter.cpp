@@ -30,7 +30,7 @@ namespace
     void test_Array_optimized()
     {
         BufferWriter writer;
-        writer.writeBeginArray(6, ValueType::Int16Value);
+        writer.writeBeginArray(6, ValueType::INT16_VALUE);
         int16_t values[4] = {13, 17, 19, 23};
         writer.writeRawValue(int16_t(11));
         writer.writeRawValues(values, sizeof(values) / sizeof(*values));
@@ -47,12 +47,12 @@ namespace
     void test_Optimized_array_of_arrays()
     {
         BufferWriter writer;
-        writer.writeBeginArray(2, ValueType::ArrayValue);
-        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeBeginArray(2, ValueType::ARRAY_VALUE);
+        writer.writeBeginArray(2, ValueType::INT8_VALUE);
         writer.writeValue(int8_t(1));
         writer.writeValue(int8_t(2));
         writer.writeEndArray();
-        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeBeginArray(2, ValueType::INT8_VALUE);
         writer.writeValue(int8_t(3));
         writer.writeValue(int8_t(4));
         writer.writeEndArray();
@@ -68,11 +68,11 @@ namespace
     {
         BufferWriter writer;
         writer.writeBeginArray();
-        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeBeginArray(2, ValueType::INT8_VALUE);
         writer.writeValue(int8_t(1));
         writer.writeValue(int8_t(2));
         writer.writeEndArray();
-        writer.writeBeginArray(2, ValueType::Int8Value);
+        writer.writeBeginArray(2, ValueType::INT8_VALUE);
         writer.writeValue(int8_t(3));
         writer.writeValue(int8_t(4));
         writer.writeEndArray();

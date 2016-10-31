@@ -56,12 +56,12 @@ namespace Byson
 
     void BufferWriter::writeBeginObject(int64_t count, ValueType valueType)
     {
-        writePrefix(ValueType::ObjectValue);
+        writePrefix(ValueType::OBJECT_VALUE);
 
         int newState = StateFlags::WRITE_NAME;
         if (count >= 0 && (m_States.top() & WRITE_END_STRUCTURE))
         {
-            if (valueType != ValueType::UndefinedValue)
+            if (valueType != ValueType::UNDEFINED_VALUE)
                 writeValueType(valueType);
             else
                 newState |= StateFlags::WRITE_TYPE;
@@ -91,12 +91,12 @@ namespace Byson
 
     void BufferWriter::writeBeginArray(int64_t count, ValueType valueType)
     {
-        writePrefix(ValueType::ArrayValue);
+        writePrefix(ValueType::ARRAY_VALUE);
 
         int newState = StateFlags::NONE;
         if (count >= 0 && (m_States.top() & WRITE_END_STRUCTURE))
         {
-            if (valueType != ValueType::UndefinedValue)
+            if (valueType != ValueType::UNDEFINED_VALUE)
                 writeValueType(valueType);
             else
                 newState |= StateFlags::WRITE_TYPE;
@@ -131,7 +131,7 @@ namespace Byson
 
     void BufferWriter::writeNull()
     {
-        writePrefix(ValueType::NullValue);
+        writePrefix(ValueType::NULL_VALUE);
     }
 
     void BufferWriter::writeNull(const std::string& name)
@@ -142,12 +142,12 @@ namespace Byson
 
     void BufferWriter::writeNoOp()
     {
-        writePrefix(ValueType::NoOpValue);
+        writePrefix(ValueType::NOOP_VALUE);
     }
 
     void BufferWriter::writeBool(bool value)
     {
-        writePrefix(value ? ValueType::TrueValue : ValueType::FalseValue);
+        writePrefix(value ? ValueType::TRUE_VALUE : ValueType::FALSE_VALUE);
     }
 
     void BufferWriter::writeBool(const std::string& name, bool value)
@@ -158,73 +158,73 @@ namespace Byson
 
     void BufferWriter::writeValue(int8_t value)
     {
-        writePrefix(ValueType::Int8Value);
+        writePrefix(ValueType::INT8_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(uint8_t value)
     {
-        writePrefix(ValueType::UInt8Value);
+        writePrefix(ValueType::UINT8_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(int16_t value)
     {
-        writePrefix(ValueType::Int16Value);
+        writePrefix(ValueType::INT16_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(uint16_t value)
     {
-        writePrefix(ValueType::Int16Value);
+        writePrefix(ValueType::INT16_VALUE);
         writeRawValue(int16_t(value));
     }
 
     void BufferWriter::writeValue(int32_t value)
     {
-        writePrefix(ValueType::Int32Value);
+        writePrefix(ValueType::INT32_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(uint32_t value)
     {
-        writePrefix(ValueType::Int32Value);
+        writePrefix(ValueType::INT32_VALUE);
         writeRawValue(int32_t(value));
     }
 
     void BufferWriter::writeValue(int64_t value)
     {
-        writePrefix(ValueType::Int64Value);
+        writePrefix(ValueType::INT64_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(uint64_t value)
     {
-        writePrefix(ValueType::Int64Value);
+        writePrefix(ValueType::INT64_VALUE);
         writeRawValue(int64_t(value));
     }
 
     void BufferWriter::writeValue(float value)
     {
-        writePrefix(ValueType::Float32Value);
+        writePrefix(ValueType::FLOAT32_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(double value)
     {
-        writePrefix(ValueType::Float64Value);
+        writePrefix(ValueType::FLOAT64_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(char value)
     {
-        writePrefix(ValueType::CharValue);
+        writePrefix(ValueType::CHAR_VALUE);
         writeRawValue(value);
     }
 
     void BufferWriter::writeValue(const std::string& value)
     {
-        writePrefix(ValueType::StringValue);
+        writePrefix(ValueType::STRING_VALUE);
         writeRawValue(value);
     }
 
@@ -308,43 +308,43 @@ namespace Byson
         {
             if (value < 0x80LL)
             {
-                m_Buffer.push_back(uint8_t(ValueType::Int8Value));
+                m_Buffer.push_back(uint8_t(ValueType::INT8_VALUE));
                 writeRawValue(static_cast<int8_t>(value));
             }
             else if (value < 0x100LL)
             {
-                m_Buffer.push_back(uint8_t(ValueType::UInt8Value));
+                m_Buffer.push_back(uint8_t(ValueType::UINT8_VALUE));
                 writeRawValue(static_cast<uint8_t>(value));
             }
             else if (value < 0x8000LL)
             {
-                m_Buffer.push_back(uint8_t(ValueType::Int16Value));
+                m_Buffer.push_back(uint8_t(ValueType::INT16_VALUE));
                 writeRawValue(static_cast<int16_t>(value));
             }
             else if (value < 0x80000000LL)
             {
-                m_Buffer.push_back(uint8_t(ValueType::Int32Value));
+                m_Buffer.push_back(uint8_t(ValueType::INT32_VALUE));
                 writeRawValue(static_cast<int32_t>(value));
             }
             else
             {
-                m_Buffer.push_back(uint8_t(ValueType::Int64Value));
+                m_Buffer.push_back(uint8_t(ValueType::INT64_VALUE));
                 writeRawValue(value);
             }
         }
         else if (value >= -0x8000LL)
         {
-            m_Buffer.push_back(uint8_t(ValueType::Int16Value));
+            m_Buffer.push_back(uint8_t(ValueType::INT16_VALUE));
             writeRawValue(static_cast<int16_t>(value));
         }
         else if (value >= -0x80000000LL)
         {
-            m_Buffer.push_back(uint8_t(ValueType::Int32Value));
+            m_Buffer.push_back(uint8_t(ValueType::INT32_VALUE));
             writeRawValue(static_cast<int32_t>(value));
         }
         else
         {
-            m_Buffer.push_back(uint8_t(ValueType::Int64Value));
+            m_Buffer.push_back(uint8_t(ValueType::INT64_VALUE));
             writeRawValue(value);
         }
     }

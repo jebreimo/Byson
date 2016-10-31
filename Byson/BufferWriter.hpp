@@ -31,20 +31,20 @@ namespace Byson
         size_t size() const;
 
         void writeBeginObject(int64_t count = -1,
-                              ValueType valueType = ValueType::UndefinedValue);
+                              ValueType valueType = ValueType::UNDEFINED_VALUE);
 
         void writeBeginObject(const std::string& name,
                               int64_t count = -1,
-                              ValueType valueType = ValueType::UndefinedValue);
+                              ValueType valueType = ValueType::UNDEFINED_VALUE);
 
         void writeEndObject();
 
         void writeBeginArray(int64_t count = -1,
-                             ValueType valueType = ValueType::UndefinedValue);
+                             ValueType valueType = ValueType::UNDEFINED_VALUE);
 
         void writeBeginArray(const std::string& name,
                              int64_t count = -1,
-                             ValueType valueType = ValueType::UndefinedValue);
+                             ValueType valueType = ValueType::UNDEFINED_VALUE);
 
         void writeEndArray();
 

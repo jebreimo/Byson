@@ -18,7 +18,7 @@ namespace Byson
     {
         ContainerInfo()
             : length(),
-              type(ValueType::UndefinedValue)
+              type(ValueType::UNDEFINED_VALUE)
         {}
 
         ContainerInfo(int64_t length, ValueType type)

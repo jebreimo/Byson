@@ -33,7 +33,7 @@ namespace
     {
         std::ostringstream ss(std::ios_base::out | std::ios_base::binary);
         StreamWriter writer(ss);
-        writer.writeBeginArray(6, ValueType::Int16Value);
+        writer.writeBeginArray(6, ValueType::INT16_VALUE);
         int16_t values[4] = {13, 17, 19, 23};
         writer.writeRawValue(int16_t(11));
         writer.writeRawValues(values, sizeof(values) / sizeof(*values));

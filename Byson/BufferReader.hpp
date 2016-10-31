@@ -158,7 +158,7 @@ namespace Byson
             if (!m_Tokenizer.read(values.data(), size_t(info.length)))
                 return false;
         }
-        else if (info.type != ValueType::UndefinedValue)
+        else if (info.type != ValueType::UNDEFINED_VALUE)
         {
             values.reserve(size_t(info.length));
             for (auto i = 0LL; i < info.length; ++i)

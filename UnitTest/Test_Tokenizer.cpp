@@ -50,16 +50,16 @@ namespace
                           'S', 'i', 3, 'J', 'a', 'n',
                           'i', 3, 'a', 'g', 'e', 'l', 0, 0, 0, 39, '}'};
         Tokenizer tokenizer(data, sizeof(data));
-        Y_CALL(checkNextToken(tokenizer, TokenType::BeginObject));
-        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::Int8Value, 4));
+        Y_CALL(checkNextToken(tokenizer, TokenType::BEGIN_OBJECT));
+        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::INT8_VALUE, 4));
         Y_CALL(checkReadRawString(tokenizer, "name"));
-        Y_CALL(checkNextToken(tokenizer, TokenType::StringValue));
-        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::Int8Value, 3));
+        Y_CALL(checkNextToken(tokenizer, TokenType::STRING_VALUE));
+        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::INT8_VALUE, 3));
         Y_CALL(checkReadRawString(tokenizer, "Jan"));
-        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::Int8Value, 3));
+        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::INT8_VALUE, 3));
         Y_CALL(checkReadRawString(tokenizer, "age"));
-        Y_CALL(checkReadValue<int32_t>(tokenizer, TokenType::Int32Value, 39));
-        Y_CALL(checkNextToken(tokenizer, TokenType::EndObject));
+        Y_CALL(checkReadValue<int32_t>(tokenizer, TokenType::INT32_VALUE, 39));
+        Y_CALL(checkNextToken(tokenizer, TokenType::END_OBJECT));
     }
 
     void test_Array_optimized()
@@ -68,11 +68,11 @@ namespace
                 '[', '$', 'I', '#', 'i', 6, 0, 11, 0, 13, 0, 17, 0, 19, 0, 23,
                 0, 29};
         Tokenizer tokenizer(data, sizeof(data));
-        Y_CALL(checkNextToken(tokenizer, TokenType::BeginArray));
-        Y_CALL(checkNextToken(tokenizer, TokenType::ValueType));
-        Y_CALL(checkNextToken(tokenizer, TokenType::Int16Value));
-        Y_CALL(checkNextToken(tokenizer, TokenType::Count));
-        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::Int8Value, 6));
+        Y_CALL(checkNextToken(tokenizer, TokenType::BEGIN_ARRAY));
+        Y_CALL(checkNextToken(tokenizer, TokenType::VALUE_TYPE));
+        Y_CALL(checkNextToken(tokenizer, TokenType::INT16_VALUE));
+        Y_CALL(checkNextToken(tokenizer, TokenType::COUNT));
+        Y_CALL(checkReadValue<int8_t>(tokenizer, TokenType::INT8_VALUE, 6));
         int16_t expected[] = {11, 13, 17, 19, 23, 29};
         Y_CALL(checkReadRawArray(tokenizer, expected));
     }

@@ -67,12 +67,12 @@ namespace Byson
 
     void StreamWriter::writeBeginObject(int64_t count, ValueType valueType)
     {
-        writePrefix(ValueType::ObjectValue);
+        writePrefix(ValueType::OBJECT_VALUE);
 
         int newState = StateFlags::WRITE_NAME;
         if (count >= 0)
         {
-            if (valueType != ValueType::UndefinedValue)
+            if (valueType != ValueType::UNDEFINED_VALUE)
                 writeValueType(valueType);
             else
                 newState |= StateFlags::WRITE_TYPE;
@@ -102,12 +102,12 @@ namespace Byson
 
     void StreamWriter::writeBeginArray(int64_t count, ValueType valueType)
     {
-        writePrefix(ValueType::ArrayValue);
+        writePrefix(ValueType::ARRAY_VALUE);
 
         int newState = StateFlags::NONE;
         if (count >= 0)
         {
-            if (valueType != ValueType::UndefinedValue)
+            if (valueType != ValueType::UNDEFINED_VALUE)
                 writeValueType(valueType);
             else
                 newState |= StateFlags::WRITE_TYPE;
@@ -142,7 +142,7 @@ namespace Byson
 
     void StreamWriter::writeNull()
     {
-        writePrefix(ValueType::NullValue);
+        writePrefix(ValueType::NULL_VALUE);
     }
 
     void StreamWriter::writeNull(const std::string& name)
@@ -153,12 +153,12 @@ namespace Byson
 
     void StreamWriter::writeNoOp()
     {
-        writePrefix(ValueType::NoOpValue);
+        writePrefix(ValueType::NOOP_VALUE);
     }
 
     void StreamWriter::writeBool(bool value)
     {
-        writePrefix(value ? ValueType::TrueValue : ValueType::FalseValue);
+        writePrefix(value ? ValueType::TRUE_VALUE : ValueType::FALSE_VALUE);
     }
 
     void StreamWriter::writeBool(const std::string& name, bool value)
@@ -169,73 +169,73 @@ namespace Byson
 
     void StreamWriter::writeValue(int8_t value)
     {
-        writePrefix(ValueType::Int8Value);
+        writePrefix(ValueType::INT8_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(uint8_t value)
     {
-        writePrefix(ValueType::UInt8Value);
+        writePrefix(ValueType::UINT8_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(int16_t value)
     {
-        writePrefix(ValueType::Int16Value);
+        writePrefix(ValueType::INT16_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(uint16_t value)
     {
-        writePrefix(ValueType::Int16Value);
+        writePrefix(ValueType::INT16_VALUE);
         writeRawValue(int16_t(value));
     }
 
     void StreamWriter::writeValue(int32_t value)
     {
-        writePrefix(ValueType::Int32Value);
+        writePrefix(ValueType::INT32_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(uint32_t value)
     {
-        writePrefix(ValueType::Int32Value);
+        writePrefix(ValueType::INT32_VALUE);
         writeRawValue(int32_t(value));
     }
 
     void StreamWriter::writeValue(int64_t value)
     {
-        writePrefix(ValueType::Int64Value);
+        writePrefix(ValueType::INT64_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(uint64_t value)
     {
-        writePrefix(ValueType::Int64Value);
+        writePrefix(ValueType::INT64_VALUE);
         writeRawValue(int64_t(value));
     }
 
     void StreamWriter::writeValue(float value)
     {
-        writePrefix(ValueType::Float32Value);
+        writePrefix(ValueType::FLOAT32_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(double value)
     {
-        writePrefix(ValueType::Float64Value);
+        writePrefix(ValueType::FLOAT64_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(char value)
     {
-        writePrefix(ValueType::CharValue);
+        writePrefix(ValueType::CHAR_VALUE);
         writeRawValue(value);
     }
 
     void StreamWriter::writeValue(const std::string& value)
     {
-        writePrefix(ValueType::StringValue);
+        writePrefix(ValueType::STRING_VALUE);
         writeRawValue(value);
     }
 
@@ -319,43 +319,43 @@ namespace Byson
         {
             if (value < 0x80LL)
             {
-                m_Stream->put(char(ValueType::Int8Value));
+                m_Stream->put(char(ValueType::INT8_VALUE));
                 writeRawValue(static_cast<int8_t>(value));
             }
             else if (value < 0x100LL)
             {
-                m_Stream->put(char(ValueType::UInt8Value));
+                m_Stream->put(char(ValueType::UINT8_VALUE));
                 writeRawValue(static_cast<uint8_t>(value));
             }
             else if (value < 0x8000LL)
             {
-                m_Stream->put(char(ValueType::Int16Value));
+                m_Stream->put(char(ValueType::INT16_VALUE));
                 writeRawValue(static_cast<int16_t>(value));
             }
             else if (value < 0x80000000LL)
             {
-                m_Stream->put(char(ValueType::Int32Value));
+                m_Stream->put(char(ValueType::INT32_VALUE));
                 writeRawValue(static_cast<int32_t>(value));
             }
             else
             {
-                m_Stream->put(char(ValueType::Int64Value));
+                m_Stream->put(char(ValueType::INT64_VALUE));
                 writeRawValue(value);
             }
         }
         else if (value >= -0x8000LL)
         {
-            m_Stream->put(char(ValueType::Int16Value));
+            m_Stream->put(char(ValueType::INT16_VALUE));
             writeRawValue(static_cast<int16_t>(value));
         }
         else if (value >= -0x80000000LL)
         {
-            m_Stream->put(char(ValueType::Int32Value));
+            m_Stream->put(char(ValueType::INT32_VALUE));
             writeRawValue(static_cast<int32_t>(value));
         }
         else
         {
-            m_Stream->put(char(ValueType::Int64Value));
+            m_Stream->put(char(ValueType::INT64_VALUE));
             writeRawValue(value);
         }
     }

@@ -7,8 +7,6 @@
 //****************************************************************************
 #include "BufferReader.hpp"
 
-#include <ostream>
-
 namespace Byson
 {
     BufferReader::BufferReader(const void* buffer, size_t size)
@@ -38,7 +36,7 @@ namespace Byson
     bool BufferReader::readBeginObject(ContainerInfo& info)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::BeginObject))
+        if (!readTokenType(TokenType::BEGIN_OBJECT))
             return false;
         if (!readContainerInfo(info))
             return false;
@@ -49,7 +47,7 @@ namespace Byson
     bool BufferReader::readEndObject()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::EndObject))
+        if (!readTokenType(TokenType::END_OBJECT))
             return false;
         tokRestorer.clear();
         return true;
@@ -58,13 +56,13 @@ namespace Byson
     bool BufferReader::isEndObject() const
     {
         return m_Tokenizer.peekToken()
-               == std::make_pair(true, TokenType::EndObject);
+               == std::make_pair(true, TokenType::END_OBJECT);
     }
 
     bool BufferReader::readBeginArray(ContainerInfo& info)
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::BeginArray))
+        if (!readTokenType(TokenType::BEGIN_ARRAY))
             return false;
         if (!readContainerInfo(info))
             return false;
@@ -75,7 +73,7 @@ namespace Byson
     bool BufferReader::readEndArray()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::EndArray))
+        if (!readTokenType(TokenType::END_ARRAY))
             return false;
         tokRestorer.clear();
         return true;
@@ -83,7 +81,7 @@ namespace Byson
 
     bool BufferReader::isEndArray() const
     {
-        return m_Tokenizer.peekToken() == std::make_pair(true, TokenType::EndArray);
+        return m_Tokenizer.peekToken() == std::make_pair(true, TokenType::END_ARRAY);
     }
 
     bool BufferReader::readKey(StringRef& stringRef)
@@ -94,7 +92,7 @@ namespace Byson
     bool BufferReader::readNull()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::NullValue))
+        if (!readTokenType(TokenType::NULL_VALUE))
             return false;
         tokRestorer.clear();
         return true;
@@ -103,7 +101,7 @@ namespace Byson
     bool BufferReader::readNoOp()
     {
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
-        if (!readTokenType(TokenType::NoOpValue))
+        if (!readTokenType(TokenType::NOOP_VALUE))
             return false;
         tokRestorer.clear();
         return true;
@@ -114,9 +112,9 @@ namespace Byson
         TokenizerPositionRestorer tokRestorer(m_Tokenizer);
         if (!m_Tokenizer.nextToken())
             return false;
-        if (m_Tokenizer.tokenType() == TokenType::TrueValue)
+        if (m_Tokenizer.tokenType() == TokenType::TRUE_VALUE)
             value = true;
-        else if (m_Tokenizer.tokenType() == TokenType::FalseValue)
+        else if (m_Tokenizer.tokenType() == TokenType::FALSE_VALUE)
             value = false;
         else
             return false;
@@ -134,27 +132,27 @@ namespace Byson
             return true; \
         }
 
-    IMPLEMENT_READ_VALUE(char, CharValue)
+    IMPLEMENT_READ_VALUE(char, CHAR_VALUE)
 
-    IMPLEMENT_READ_VALUE(int8_t, Int8Value)
+    IMPLEMENT_READ_VALUE(int8_t, INT8_VALUE)
 
-    IMPLEMENT_READ_VALUE(uint8_t, UInt8Value)
+    IMPLEMENT_READ_VALUE(uint8_t, UINT8_VALUE)
 
-    IMPLEMENT_READ_VALUE(int16_t, Int16Value)
+    IMPLEMENT_READ_VALUE(int16_t, INT16_VALUE)
 
-    IMPLEMENT_READ_VALUE(int32_t, Int32Value)
+    IMPLEMENT_READ_VALUE(int32_t, INT32_VALUE)
 
-    IMPLEMENT_READ_VALUE(int64_t, Int64Value)
+    IMPLEMENT_READ_VALUE(int64_t, INT64_VALUE)
 
-    IMPLEMENT_READ_VALUE(long, Int32Value)
+    IMPLEMENT_READ_VALUE(long, INT32_VALUE)
 
-    IMPLEMENT_READ_VALUE(unsigned, Int32Value)
+    IMPLEMENT_READ_VALUE(unsigned, INT32_VALUE)
 
-    IMPLEMENT_READ_VALUE(float, Float32Value)
+    IMPLEMENT_READ_VALUE(float, FLOAT32_VALUE)
 
-    IMPLEMENT_READ_VALUE(double, Float64Value)
+    IMPLEMENT_READ_VALUE(double, FLOAT64_VALUE)
 
-    IMPLEMENT_READ_VALUE(StringRef, StringValue)
+    IMPLEMENT_READ_VALUE(StringRef, STRING_VALUE)
 
     #define IMPLEMENT_READ_RAW_VALUE(type) \
         bool BufferReader::readRawValue(type& value) \
@@ -223,17 +221,17 @@ namespace Byson
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        case ValueType::Int16Value:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        case ValueType::INT16_VALUE:
             return readRawValue(value);
-        IMPLEMENT_CASE_VALUE_TYPE(CharValue);
+        IMPLEMENT_CASE_VALUE_TYPE(CHAR_VALUE);
         default:
             return false;
         }
@@ -244,18 +242,18 @@ namespace Byson
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int16Value);
-        case ValueType::Int32Value:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT16_VALUE);
+        case ValueType::INT32_VALUE:
             return readRawValue(value);
-        IMPLEMENT_CASE_VALUE_TYPE(CharValue);
+        IMPLEMENT_CASE_VALUE_TYPE(CHAR_VALUE);
         default:
             return false;
         }
@@ -266,19 +264,19 @@ namespace Byson
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int16Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int32Value);
-        case ValueType::Int64Value:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT16_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT32_VALUE);
+        case ValueType::INT64_VALUE:
             return readRawValue(value);
-        IMPLEMENT_CASE_VALUE_TYPE(CharValue);
+        IMPLEMENT_CASE_VALUE_TYPE(CHAR_VALUE);
         default:
             return false;
         }
@@ -305,27 +303,27 @@ namespace Byson
 
     bool BufferReader::readCompatibleRawValue(StringRef& stringRef, ValueType type)
     {
-        return type == ValueType::StringValue && readRawValue(stringRef);
+        return type == ValueType::STRING_VALUE && readRawValue(stringRef);
     }
 
     bool BufferReader::readCompatibleRawValue(float& value, ValueType type)
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int16Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int32Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int64Value);
-        case ValueType::Float32Value:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT16_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT32_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT64_VALUE);
+        case ValueType::FLOAT32_VALUE:
             return readRawValue(value);
-        IMPLEMENT_CASE_VALUE_TYPE(CharValue);
+        IMPLEMENT_CASE_VALUE_TYPE(CHAR_VALUE);
         default:
             return false;
         }
@@ -336,21 +334,21 @@ namespace Byson
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int16Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int32Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Int64Value);
-        IMPLEMENT_CASE_VALUE_TYPE(Float32Value);
-        case ValueType::Float64Value:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT16_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT32_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(INT64_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(FLOAT32_VALUE);
+        case ValueType::FLOAT64_VALUE:
             return readRawValue(value);
-        IMPLEMENT_CASE_VALUE_TYPE(CharValue);
+        IMPLEMENT_CASE_VALUE_TYPE(CHAR_VALUE);
         default:
             return false;
         }
@@ -361,15 +359,15 @@ namespace Byson
     {
         switch (type)
         {
-        case ValueType::TrueValue:
+        case ValueType::TRUE_VALUE:
             value = 1;
             break;
-        case ValueType::FalseValue:
+        case ValueType::FALSE_VALUE:
             value = 0;
             break;
-        IMPLEMENT_CASE_VALUE_TYPE(Int8Value);
-        IMPLEMENT_CASE_VALUE_TYPE(UInt8Value);
-        case ValueType::CharValue:
+        IMPLEMENT_CASE_VALUE_TYPE(INT8_VALUE);
+        IMPLEMENT_CASE_VALUE_TYPE(UINT8_VALUE);
+        case ValueType::CHAR_VALUE:
             return readRawValue(value);
         default:
             return false;
@@ -391,7 +389,7 @@ namespace Byson
         }
 
         bool hasType = false;
-        if (m_Tokenizer.tokenType() == TokenType::ValueType)
+        if (m_Tokenizer.tokenType() == TokenType::VALUE_TYPE)
         {
             char tmp;
             if (!readRawValue(tmp))
@@ -402,7 +400,7 @@ namespace Byson
                 return false;
         }
 
-        if (m_Tokenizer.tokenType() == TokenType::Count)
+        if (m_Tokenizer.tokenType() == TokenType::COUNT)
         {
             if (!readCompatibleValue(info.length))
                 return false;

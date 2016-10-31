@@ -43,7 +43,7 @@ namespace Byson
         TokenType operator[](char marker) const
         {
             if (marker < 0)
-                return TokenType::UnknownToken;
+                return TokenType::UNKNOWN_TOKEN;
             return m_TokenTypes[int(marker)];
         }
 

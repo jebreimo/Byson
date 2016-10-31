@@ -12,26 +12,26 @@ namespace Byson
 {
     enum class TokenType : char
     {
-        UnknownToken = 0,
-        NullValue = 'Z',
-        NoOpValue = 'N',
-        TrueValue = 'T',
-        FalseValue = 'F',
-        Int8Value = 'i',
-        UInt8Value = 'U',
-        Int16Value = 'I',
-        Int32Value = 'l',
-        Int64Value = 'L',
-        Float32Value = 'd',
-        Float64Value = 'D',
-        CharValue = 'C',
-        StringValue = 'S',
-        BeginObject = '{',
-        EndObject = '}',
-        BeginArray = '[',
-        EndArray = ']',
-        Count = '#',
-        ValueType = '$'
+        UNKNOWN_TOKEN = 0,
+        NULL_VALUE = 'Z',
+        NOOP_VALUE = 'N',
+        TRUE_VALUE = 'T',
+        FALSE_VALUE = 'F',
+        INT8_VALUE = 'i',
+        UINT8_VALUE = 'U',
+        INT16_VALUE = 'I',
+        INT32_VALUE = 'l',
+        INT64_VALUE = 'L',
+        FLOAT32_VALUE = 'd',
+        FLOAT64_VALUE = 'D',
+        CHAR_VALUE = 'C',
+        STRING_VALUE = 'S',
+        BEGIN_OBJECT = '{',
+        END_OBJECT = '}',
+        BEGIN_ARRAY = '[',
+        END_ARRAY = ']',
+        COUNT = '#',
+        VALUE_TYPE = '$'
     };
 
     inline std::ostream& operator<<(std::ostream& os, TokenType tokenType)
